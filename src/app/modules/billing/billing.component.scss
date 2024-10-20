@@ -1,0 +1,20 @@
+.total-amount-container {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Shadow effect */
+    background-color: #ffffff;
+    color: #333;
+  }
+  
+  .total-amount-label {
+    margin-right: 10px;
+  }
+  
+  .total-amount-value {
+    color: #28a745;
+  }
+  
