@@ -1,8 +1,18 @@
 import { Routes } from '@angular/router';
 
 import { FullComponent } from './layouts/full/full.component';
+import { LoginComponent } from './auth/login/login.component';
 
 export const AppRoutes: Routes = [
+  {
+    path: '',
+    redirectTo: '/login', 
+    pathMatch: 'full'
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
   {
     path: '',
     component: FullComponent,
