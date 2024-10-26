@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ export class LoginComponent {
   signUpObj: SignUpModel  = new SignUpModel();
   loginObj: LoginModel  = new LoginModel();
 
-  constructor( private router: Router){}
+  constructor( private router: Router, private authService: AuthService){}
 
   onRegister() {
     const localUser = localStorage.getItem('angular17users');
@@ -32,7 +33,7 @@ export class LoginComponent {
   onLogin() {
     if (this.loginObj.email === 'admin@gmail.com' && this.loginObj.password === 'admin') {
       alert("User Found...");
-      // this.authService.login(); // Set the authentication status
+      this.authService.login(); // Set the authentication status
       this.router.navigateByUrl('/dashboard');
     } else {
       alert("No User Found");
