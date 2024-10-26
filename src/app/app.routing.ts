@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { FullComponent } from './layouts/full/full.component';
 import { LoginComponent } from './auth/login/login.component';
+import { AuthGuard } from './auth/auth.guard'; // Import your AuthGuard
 
 export const AppRoutes: Routes = [
   {
@@ -16,6 +17,7 @@ export const AppRoutes: Routes = [
   {
     path: '',
     component: FullComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: '',
@@ -32,5 +34,9 @@ export const AppRoutes: Routes = [
         loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
       }
     ]
+  },
+  {
+    path: '**',
+    redirectTo: '/login' // Redirect unknown paths to login
   }
 ];

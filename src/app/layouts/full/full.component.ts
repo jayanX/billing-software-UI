@@ -1,5 +1,7 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import {ChangeDetectorRef, Component,OnDestroy,AfterViewInit} from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/auth.service';
 
 
 
@@ -17,6 +19,7 @@ export class FullComponent implements OnDestroy, AfterViewInit {
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
+    private authService: AuthService, private router: Router,
   
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 1024px)');
@@ -28,4 +31,9 @@ export class FullComponent implements OnDestroy, AfterViewInit {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
   ngAfterViewInit() {}
+
+  onLogout() {
+    this.authService.logout(); // Log out the user
+    this.router.navigate(['/login']); // Navigate back to the login page
+  }
 }

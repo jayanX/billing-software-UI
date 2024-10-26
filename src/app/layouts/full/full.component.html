@@ -38,6 +38,11 @@
         <!-- app header component - style you can find in header.scss / header.component.ts-->
         <!-- ============================================================== -->
         <app-header class="d-flex align-items-center ml-auto"></app-header>
+
+        <button mat-button color="accent" (click)="onLogout()" style="color: #f5f5f5;">
+            <mat-icon>logout</mat-icon>
+            Sign Out
+        </button>
     </mat-toolbar>
     <!-- ============================================================== -->
     <!-- End Topbar - style you can find in pages.scss -->
