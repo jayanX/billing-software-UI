@@ -16,7 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { DemoMaterialModule } from '../demo-material-module';
 import { EditProductComponent } from './edit-product/edit-product.component';
-
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 
 @NgModule({
@@ -39,7 +39,8 @@ import { EditProductComponent } from './edit-product/edit-product.component';
     MatTableModule,
     MatIconModule,
     DemoMaterialModule ,ReactiveFormsModule,
-    
+     ZXingScannerModule
+
 
   
   ]
