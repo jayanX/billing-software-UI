@@ -1,24 +1,38 @@
 <!-- Add Items to Cart -->
 <div class="row">
-    <div class="col-12">
-      <mat-card>
-        <mat-card-content>
-          <mat-card-title>Add Items to Cart</mat-card-title>
-          <div class="row">
-            <div class="col-lg-5">
-              <mat-form-field appearance="fill" class="w-100">
-                <mat-label>Select Product</mat-label>
-                <mat-select [(ngModel)]="selectedProduct">
-                  <mat-option *ngFor="let product of products" [value]="product">
-                    {{ product.name }} (₹{{ product.pricePerUnit }})
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
+  <div class="col-12">
+    <mat-card>
+      <mat-card-content>
+        <mat-card-title>Add Items to Cart</mat-card-title>
+        <div class="row">
+          <div class="col-lg-5">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Select Product</mat-label>
+              <input type="text"
+                     matInput
+                     [formControl]="searchControl"
+                     [matAutocomplete]="auto"
+                     placeholder="Search products...">
+              <mat-autocomplete #auto="matAutocomplete" 
+                                [displayWith]="displayFn"
+                                (optionSelected)="onProductSelected($event.option.value)">
+                <mat-option *ngFor="let product of filteredProducts" [value]="product">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{ product.productName }}</span>
+                    <span class="text-muted">
+                      (Rs : {{ product.price }} - {{ product.quantity }}{{ product.unit }})
+                    </span>
+                  </div>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <!-- Rest of your existing template -->
+        
   
             <div class="col-lg-4">
               <mat-form-field appearance="fill" class="w-100">
-                <mat-label>Enter Quantity</mat-label>
+                <mat-label>Total Items</mat-label>
                 <input matInput type="number" [(ngModel)]="quantity" min="1" />
               </mat-form-field>
             </div>
@@ -31,7 +45,30 @@
       </mat-card>
     </div>
   </div>
-  
+
+
+  <div class="row">
+    <div class="col-12">
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title>Enter Barcode</mat-card-title>
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Barcode</mat-label>
+            <input matInput placeholder="Enter barcode" [(ngModel)]="barcode" (ngModelChange)="onBarcodeChange()" [pattern]="'^[0-9]{8,15}$'"  maxlength="15"
+            minlength="8" (keypress)="allowOnlyNumbers($event)"/>          </mat-form-field>
+            <!-- Display message with dynamic color -->
+        <mat-hint [ngClass]="{'text-success': isProductFound, 'text-danger': !isProductFound}" *ngIf="message">
+          {{ message }}
+        </mat-hint>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+
+
+
+
 <!-- Order Item Details Table -->
 <div class="row mt-4">
     <div class="col-12">
@@ -41,17 +78,22 @@
           <table mat-table [dataSource]="orderItems" class="mat-elevation-z8 w-100">
             <ng-container matColumnDef="product">
               <th mat-header-cell *matHeaderCellDef> Product </th>
-              <td mat-cell *matCellDef="let item"> {{ item.product.name }} </td>
+              <td mat-cell *matCellDef="let item"> {{ item.productName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="totalItems">
+              <th mat-header-cell *matHeaderCellDef> Total Items </th>
+              <td mat-cell *matCellDef="let item"> {{ item.count}} </td>
             </ng-container>
   
             <ng-container matColumnDef="quantity">
               <th mat-header-cell *matHeaderCellDef> Quantity </th>
-              <td mat-cell *matCellDef="let item"> {{ item.quantity }} </td>
+              <td mat-cell *matCellDef="let item"> {{ item.quantity }}{{item.unit}} </td>
             </ng-container>
   
             <ng-container matColumnDef="pricePerUnit">
               <th mat-header-cell *matHeaderCellDef> Price/Unit </th>
-              <td mat-cell *matCellDef="let item"> ₹{{ item.product.pricePerUnit }} </td>
+              <td mat-cell *matCellDef="let item"> ₹{{ item.price}} </td>
             </ng-container>
   
             <ng-container matColumnDef="totalCost">
@@ -89,5 +131,9 @@
       <button mat-raised-button color="primary" (click)="generatePDF()">Generate Invoice PDF</button>
     </div>
   </div>
+
+
+
+
   
   

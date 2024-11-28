@@ -3,13 +3,16 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { EditProductComponent } from '../edit-product/edit-product.component';
+import { ProductService } from './product.service';
 
-interface Product {
-  name: string;
-  quantity: number | null; // Allow null
-  price: number | null;    // Allow null
-  gst: number | null;      // Allow null
-  volume: string;
+interface Product { 
+  productName: string;
+  barcode: string;           // Barcode for each product
+  quantity: number | null;    // Quantity of the product
+  unit: string;               // Unit for the quantity, e.g., g, kg, L
+  price: number | null;       // Price of the product
+  gst: number | null;         // GST percentage for the product
+  count: number | null; // New field
 }
 
 @Component({
@@ -20,42 +23,62 @@ interface Product {
 export class ProductComponent {
 
   newProduct: Product = {
-    name: '',
-    quantity: 0, // Default to 0
-    price: 0,    // Default to 0
-    gst: 0,      // Default to 0
-    volume: ''
+    productName: '',
+    barcode: '',
+    quantity: 0,              // Default quantity
+    unit: '',                 // Default unit
+    price: 0,                 // Default price
+    gst: 0 ,                // Default GST
+    count: 0 // Default count
   };
 
-  products: Product[] = [
-    { name: 'Milk - 15L', quantity: 7, price: 50, gst: 5, volume: '15L' },
-    { name: 'Milk - 30L', quantity: 10, price: 90, gst: 5, volume: '30L' },
-    { name: 'Egg - Dozen', quantity: 12, price: 6, gst: 5, volume: 'N/A' },
-    { name: 'Egg - Two Dozen', quantity: 24, price: 11, gst: 5, volume: 'N/A' }
-  ];
+  products: Product[] = [];
 
-  displayedColumns: string[] = ['name', 'quantity', 'price', 'gst', 'volume', 'actions'];
-
+  displayedColumns: string[] = ['name', 'barcode', 'quantity', 'unit', 'price', 'gst', 'actions'];
   dataSource!: MatTableDataSource<Product>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(public dialog: MatDialog) { } // Inject MatDialog
+  constructor(private productService: ProductService,public dialog: MatDialog) { } // Inject MatDialog
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource<Product>(this.products);
+    this.fetchProducts();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
+
+  fetchProducts() {
+    this.productService.getProducts().subscribe(
+      (data: Product[]) => {
+        this.products = data;
+        this.dataSource = new MatTableDataSource<Product>(this.products);
+        this.dataSource.paginator = this.paginator;
+      },
+      (error) => {
+        console.error('Error fetching product data:', error);
+      }
+    );
+  }
+  
   addProduct() {
-    if (this.newProduct.name && this.newProduct.quantity !== null && this.newProduct.price !== null) {
-      this.products.push({ ...this.newProduct });
-      console.log('Product added:', this.newProduct);
-      console.log('Updated products array:', this.products);
-      this.updateDataSource();
-      this.clearForm();
+    if (this.newProduct.productName && this.newProduct.barcode && this.newProduct.quantity !== null &&
+        this.newProduct.unit && this.newProduct.price !== null && this.newProduct.gst !== null &&
+        this.newProduct.count !== null) {
+      
+      // Call backend API to add product
+      this.productService.createProduct(this.newProduct).subscribe(
+        (response: Product) => {
+          console.log('Product added successfully:', response);
+          this.products.push(response);
+          this.updateDataSource();
+          this.clearForm();
+        },
+        (error: any) => {
+          console.error('Error adding product:', error);
+        }
+      );
     } else {
       console.log('Invalid product data:', this.newProduct);
     }
@@ -69,7 +92,7 @@ export class ProductComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const index = this.products.findIndex(p => p.name === product.name);
+        const index = this.products.findIndex(p => p.productName === product.productName);
         if (index >= 0) {
           this.products[index] = result;
           this.updateDataSource();
@@ -79,7 +102,7 @@ export class ProductComponent {
   }
 
   confirmDelete(product: Product) {
-    const confirmed = window.confirm(`Are you sure you want to delete the product: ${product.name}?`);
+    const confirmed = window.confirm(`Are you sure you want to delete the product: ${product.productName}?`);
     if (confirmed) {
       this.deleteProduct(product);
       console.log('Product deleted:', product);
@@ -106,11 +129,13 @@ export class ProductComponent {
   }
   clearForm() {
     this.newProduct = {
-      name: '',
-      quantity: 0, // Default to 0
-      price: 0,    // Default to 0
-      gst: 0,      // Default to 0
-      volume: ''
+      productName: '',
+      barcode: '',
+      quantity: 0,
+      unit: '',
+      price: 0,
+      gst: 0,
+      count: 0
     };
   }
 
@@ -123,5 +148,11 @@ export class ProductComponent {
       this.dataSource.paginator.firstPage();
     }
   }
+
+
+  // product.component.ts
+isValidBarcode(barcode: string): boolean {
+  return /^[0-9]{12,15}$/.test(barcode);
+}
 
 }

@@ -17,4 +17,40 @@
   .total-amount-value {
     color: #28a745;
   }
+
+
+  ::ng-deep .mat-autocomplete-panel {
+    max-height: 200px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrollbar */
+  }
+
+  .mat-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+  }
+  
+  .mat-option span {
+    font-size: 14px;
+    white-space: nowrap; /* Prevent wrapping */
+  }
+  
+  .mat-option .text-muted {
+    color: rgb(38, 84, 182);
+    font-size: 13px; /* Slightly smaller for secondary text */
+  }
+  
+
+
+  .text-success {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .text-danger {
+    color: red;
+    font-weight: bold;
+  }
+  
   
